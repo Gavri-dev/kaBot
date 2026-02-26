@@ -36,7 +36,7 @@ Most Kahoot tools only handle basic multiple-choice. Some need the Quiz ID befor
 | Jumble (Reorder)🔥 | ✅  | ❌ | ❌ |
 | Slider (Numeric)🔥 | ✅  | ❌ | ❌ |
 | Open-Ended (Type)🔥 | ✅  | ❌ | ❌ |
-| Vision AI for images | ✅ | ❌ | ❌ |
+| Vision AI for images🔥 | ✅ | ❌ | ❌ |
 | Works on custom quizzes | ✅ | ✅ | ❌ |
 | No Quiz ID needed | ✅ | ✅ | ❌ |
 | BYO API key (no paywall) | ✅ | ❌ | ❌ |
