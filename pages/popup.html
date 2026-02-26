@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=320">
+  <link rel="stylesheet" href="../styles/styles.css">
+</head>
+<body class="popup-container">
+<div class="popup-scroll">
+
+  <div class="header">
+    <h1 class="title">kaBot</h1>
+    <div class="version" id="versionLabel">v...</div>
+    <div id="apiStatus" class="api-status warn">No API key</div>
+  </div>
+
+  <div id="liveSection" class="live-section hidden">
+    <div class="live-label">Current Question</div>
+    <div id="liveQuestion" class="live-text"></div>
+    <div class="live-label answer-label">Answer</div>
+    <div id="liveAnswer" class="live-text live-answer">...</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Options</div>
+    <label class="checkbox-row"><input type="checkbox" id="highlight" class="checkbox" checked> Highlight answers</label>
+    <label class="checkbox-row"><input type="checkbox" id="autoclick" class="checkbox" checked> Auto-answer</label>
+    <label class="checkbox-row"><input type="checkbox" id="silentMode" class="checkbox"> Silent mode</label>
+    <div class="slider-row">
+      <label class="slider-label">Answer delay: <strong id="delayValue">0</strong>s</label>
+      <input type="range" id="answerDelay" class="slider" min="0" max="10" step="0.5" value="0">
+      <div class="slider-marks"><span>0s</span><span>5s</span><span>10s</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <button id="toggleOpenAI" class="collapse-toggle">
+      <span class="collapse-label">OpenAI Settings</span>
+      <span id="collapseArrow" class="collapse-arrow">▸</span>
+    </button>
+    <div id="openaiSection" class="openai-section hidden">
+      <label class="field-label">API Key</label>
+      <input type="password" id="openaiApiKey" class="field-input" placeholder="sk-..." aria-label="OpenAI API Key">
+      <label class="field-label">Model</label>
+      <input type="text" id="openaiModel" class="field-input" placeholder="gpt-5-mini" value="gpt-5-mini" aria-label="OpenAI Model">
+      <div class="openai-actions">
+        <button id="saveOpenAI" class="btn-save">Save</button>
+        <button id="clearOpenAI" class="btn-clear">Clear</button>
+      </div>
+      <div class="openai-note">Your key is stored locally and never shared. Pin questions always use gpt-4.1 vision.</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-shortcut">Press <kbd>Alt+K</kbd> to manually trigger</div>
+    <a href="https://github.com/Gavri-dev/kaBot" target="_blank" rel="noopener" class="github-btn">
+      <svg class="github-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      GitHub
+    </a>
+  </div>
+
+</div>
+<script src="../scripts/popup.js" defer></script>
+</body>
+</html>
