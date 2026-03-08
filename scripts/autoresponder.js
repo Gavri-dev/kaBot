@@ -1,4 +1,4 @@
-// kaBot — Service worker
+// kAIhoot — Service worker
 import { answerQuestion, answerMultiSelect, answerPinQuestion, answerJumbleQuestion, answerSliderQuestion, answerOpenEndedQuestion } from './openai.js';
 
 const TAG = '[SW]';

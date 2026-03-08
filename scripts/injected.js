@@ -1,9 +1,9 @@
-// kaBot — WebSocket interception layer (page context)
+// kAIhoot — WebSocket interception layer (page context)
 
 (function () {
   'use strict';
 
-  const TAG = '[kaBot]';
+  const TAG = '[kAIhoot]';
   const OldWebSocket = window.WebSocket;
 
   window.__kahootWS = null;
@@ -364,7 +364,7 @@
       console.log(TAG, 'WS order:', wsOrder, '→', wsOrder.map(i => wsTiles[i]).join(''));
       wsSend(makePayload({ type: 'jumble', choice: wsOrder, answer: wsOrder, sequence: wsOrder, questionIndex: window.kahootQuestionIndex }));
       // WS submission is the real answer — signal content.js to skip DOM fallback
-      window.dispatchEvent(new CustomEvent('kabotJumbleHandled'));
+      window.dispatchEvent(new CustomEvent('kaihootJumbleHandled'));
     }
 
     // React state manipulation (visual reorder + submit)
@@ -436,7 +436,7 @@
         }
       }
       setTimeout(trySubmit, 600);
-      window.dispatchEvent(new CustomEvent('kabotJumbleHandled'));
+      window.dispatchEvent(new CustomEvent('kaihootJumbleHandled'));
     }
   });
 

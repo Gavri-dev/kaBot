@@ -1,4 +1,4 @@
-// kaBot — Content script
+// kAIhoot — Content script
 // Bridges injected.js (page context) ↔ service worker (background)
 
 'use strict';
@@ -61,7 +61,7 @@ chrome.storage.onChanged.addListener((changes, ns) => {
 function createStatusIndicator() {
   if (statusEl || cachedSettings.silentMode) return;
   statusEl = document.createElement('div');
-  statusEl.id = 'kabot-status';
+  statusEl.id = 'kaihoot-status';
   statusEl.style.cssText = `
     position:fixed; top:10px; right:10px;
     background:rgba(0,0,0,.8); color:#fff;
@@ -71,7 +71,7 @@ function createStatusIndicator() {
     pointer-events:none; transition:opacity .3s;
     backdrop-filter:blur(6px);
   `;
-  statusEl.innerHTML = '<div id="kabot-status-main">kaBot: Ready</div><div id="kabot-status-detail" style="font-weight:400;font-size:11px;opacity:.7;margin-top:2px;display:none"></div>';
+  statusEl.innerHTML = '<div id="kaihoot-status-main">kAIhoot: Ready</div><div id="kaihoot-status-detail" style="font-weight:400;font-size:11px;opacity:.7;margin-top:2px;display:none"></div>';
   document.body?.appendChild(statusEl);
 }
 
@@ -79,9 +79,9 @@ function updateStatus(msg, detail) {
   if (cachedSettings.silentMode) return;
   if (!statusEl) createStatusIndicator();
   if (!statusEl) return;
-  const mainEl = statusEl.querySelector('#kabot-status-main');
-  const detailEl = statusEl.querySelector('#kabot-status-detail');
-  if (mainEl) mainEl.textContent = `kaBot: ${msg}`;
+  const mainEl = statusEl.querySelector('#kaihoot-status-main');
+  const detailEl = statusEl.querySelector('#kaihoot-status-detail');
+  if (mainEl) mainEl.textContent = `kAIhoot: ${msg}`;
   if (detailEl) {
     if (detail) { detailEl.textContent = detail; detailEl.style.display = 'block'; }
     else detailEl.style.display = 'none';
@@ -101,7 +101,7 @@ function showErrorToast(message) {
     padding:12px 16px; border-radius:8px; z-index:9999;
     font:600 13px/1.3 system-ui,sans-serif;
     max-width:300px; box-shadow:0 4px 12px rgba(0,0,0,.3);
-    animation: kabot-fadein .25s ease-out;
+    animation: kaihoot-fadein .25s ease-out;
   `;
   toast.textContent = message;
   document.body?.appendChild(toast);
@@ -154,7 +154,7 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
           });
         });
         if (!anyMatch) {
-          console.warn('[kaBot] Stale answer rejected:', answersFromAI, 'vs choices:', currentChoices);
+          console.warn('[kAIhoot] Stale answer rejected:', answersFromAI, 'vs choices:', currentChoices);
           sendResponse({ success: false });
           break;
         }
@@ -165,7 +165,7 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
       updateStatus('Answer received ✅', shortA);
       try { chrome.runtime.sendMessage({ action: 'updateAnswer', answer: currentAnswer }).catch(() => {}); } catch (_) {}
       cleanupOverlays();
-      console.log('[kaBot] Answers from AI:', JSON.stringify(answersFromAI), 'multiSelect:', request.isMultiSelect);
+      console.log('[kAIhoot] Answers from AI:', JSON.stringify(answersFromAI), 'multiSelect:', request.isMultiSelect);
       highlightAnswers(answersFromAI, request.isMultiSelect, request.options);
       sendResponse({ success: true });
       break;
@@ -254,7 +254,7 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
 
 // ─── Game Reset (clear stale dedup state) ────────────────────────────
 window.addEventListener('kahootGameReset', () => {
-  console.log('[kaBot] Game reset — clearing state');
+  console.log('[kAIhoot] Game reset — clearing state');
   currentQuestion = null;
   currentAnswer = null;
   lastSentHash = null; lastSentTitle = null;
@@ -267,7 +267,7 @@ window.addEventListener('kahootGameReset', () => {
 
 // Non-scored question (survey/poll) → clear status since bot won't act
 window.addEventListener('kahootNonScoredQuestion', (event) => {
-  console.log(`[kaBot] Non-scored question (${event.detail?.type}) — clearing status`);
+  console.log(`[kAIhoot] Non-scored question (${event.detail?.type}) — clearing status`);
   removeStatusIndicator();
   cleanupOverlays();
 });
@@ -284,7 +284,7 @@ window.addEventListener('kahootNonScoredQuestion', (event) => {
     lastPath = path;
     const inGame = GAME_PATHS.some(p => path.includes(p));
     if (!inGame && statusEl) {
-      console.log(`[kaBot] Left game screen (${path}) — clearing status`);
+      console.log(`[kAIhoot] Left game screen (${path}) — clearing status`);
       removeStatusIndicator();
       cleanupOverlays();
     }
@@ -306,13 +306,13 @@ window.addEventListener('kahootQuestionParsed', async (event) => {
   // Hash-based dedup: skip if already sent this exact question+choices combo
   const incomingHash = questionHash({ title: q.title, choices: q.choices || [] });
   if (lastSentHash === incomingHash) {
-    console.debug('[kaBot] Dedup: skipping duplicate WS event for "' + q.title.slice(0, 40) + '"');
+    console.debug('[kAIhoot] Dedup: skipping duplicate WS event for "' + q.title.slice(0, 40) + '"');
     return;
   }
 
   // Title lock: prevent concurrent polling for the same question
   if (lastSentTitle === q.title) {
-    console.debug('[kaBot] Dedup: already polling for "' + q.title.slice(0, 40) + '"');
+    console.debug('[kAIhoot] Dedup: already polling for "' + q.title.slice(0, 40) + '"');
     return;
   }
   lastSentTitle = q.title;
@@ -330,7 +330,7 @@ window.addEventListener('kahootQuestionParsed', async (event) => {
         // Buffer for intro animations (multi-select icon, double points badge)
         const introBuffer = 1500;
         loadingEndsAt = Date.now() + dur + del + introBuffer;
-        console.log(`[kaBot] Loading bar found: ${dur}+${del}+${introBuffer}ms buffer = ${dur + del + introBuffer}ms total`);
+        console.log(`[kAIhoot] Loading bar found: ${dur}+${del}+${introBuffer}ms buffer = ${dur + del + introBuffer}ms total`);
         break;
       }
     }
@@ -345,9 +345,9 @@ window.addEventListener('kahootQuestionParsed', async (event) => {
     const domTiles = await pollForJumbleTiles();
     if (domTiles.length > 0) {
       q.choices = domTiles;
-      console.log('[kaBot] Jumble tiles from DOM:', domTiles);
+      console.log('[kAIhoot] Jumble tiles from DOM:', domTiles);
     } else if (!q.choices?.length) {
-      console.warn('[kaBot] No jumble tiles found');
+      console.warn('[kAIhoot] No jumble tiles found');
       return;
     }
   }
@@ -364,16 +364,16 @@ window.addEventListener('kahootQuestionParsed', async (event) => {
     const labels = await pollForImageLabels(q.choices.length);
     if (labels.length === q.choices.length && labels.some(l => l && !/^Image \d+$/i.test(l))) {
       q.choices = labels;
-      console.log('[kaBot] Image choices resolved:', labels);
+      console.log('[kAIhoot] Image choices resolved:', labels);
     } else {
-      console.log('[kaBot] Image labels not resolved, using placeholders:', q.choices);
+      console.log('[kAIhoot] Image labels not resolved, using placeholders:', q.choices);
     }
   }
 
   // Check dedup again after async polling
   const postPollHash = questionHash({ title: q.title, choices: q.choices || [] });
   if (lastSentHash === postPollHash) {
-    console.debug('[kaBot] Dedup: post-poll duplicate, skipping');
+    console.debug('[kAIhoot] Dedup: post-poll duplicate, skipping');
     return;
   }
 
@@ -389,7 +389,7 @@ window.addEventListener('kahootQuestionParsed', async (event) => {
 
 // ─── Cleanup ─────────────────────────────────────────────────────────
 function cleanupOverlays() {
-  document.querySelectorAll('.kabot-pin-crosshair, .kabot-jumble-badge, .kabot-checkmark').forEach(el => el.remove());
+  document.querySelectorAll('.kaihoot-pin-crosshair, .kaihoot-jumble-badge, .kaihoot-checkmark').forEach(el => el.remove());
   for (const el of findAnswerElements()) {
     el.style.border = '';
     el.style.boxShadow = '';
@@ -461,7 +461,7 @@ function pollForJumbleTextEls(attempt = 0) {
         i++;
       }
       if (els.length > 0) {
-        console.log(`[kaBot] Found ${els.length} jumble text elements after ${attempt} polls`);
+        console.log(`[kAIhoot] Found ${els.length} jumble text elements after ${attempt} polls`);
         resolve(els);
       } else if (attempt < 20) {
         setTimeout(() => pollForJumbleTextEls(attempt + 1).then(resolve), 150);
@@ -507,7 +507,7 @@ function cleanButtonText(el) {
   }
   // Clone and strip injected elements to avoid reading checkmarks
   const clone = el.cloneNode(true);
-  clone.querySelectorAll('.kabot-checkmark').forEach(c => c.remove());
+  clone.querySelectorAll('.kaihoot-checkmark').forEach(c => c.remove());
   let text = clone.textContent.toLowerCase().trim().replace(/icon/gi, '').replace(/\s+/g, ' ').trim();
   // Deduplicate repeated text (Kahoot sometimes renders label twice in DOM)
   for (const divisor of [3, 2]) {
@@ -546,7 +546,7 @@ async function highlightAnswers(answers, isMultiSelect, options) {
   const interval = 150; // fast polling
 
   if (remaining > 0) {
-    console.log(`[kaBot] Loading bar: ${remaining}ms remaining, polling until buttons appear`);
+    console.log(`[kAIhoot] Loading bar: ${remaining}ms remaining, polling until buttons appear`);
   }
 
   while (Date.now() - start < maxWait) {
@@ -563,7 +563,7 @@ async function highlightAnswers(answers, isMultiSelect, options) {
 function applyHighlights(elements, answers, isMultiSelect, options) {
   const matchedElements = [];
 
-  console.log('[kaBot] Button texts:', elements.map(el => cleanButtonText(el)));
+  console.log('[kAIhoot] Button texts:', elements.map(el => cleanButtonText(el)));
 
   for (const answer of answers) {
     let bestEl = null, bestScore = 0, indexFallback = null;
@@ -595,16 +595,16 @@ function applyHighlights(elements, answers, isMultiSelect, options) {
     }
 
     if (bestEl && bestScore >= 55) {
-      console.log(`[kaBot] Matched "${answer}" → "${cleanButtonText(bestEl)}" (score=${bestScore})`);
+      console.log(`[kAIhoot] Matched "${answer}" → "${cleanButtonText(bestEl)}" (score=${bestScore})`);
       matchedElements.push({ el: bestEl, answer, score: bestScore });
     } else if (bestEl && bestScore >= 45 && !isMultiSelect && matchedElements.length === 0) {
-      console.log(`[kaBot] Weak match "${answer}" → "${cleanButtonText(bestEl)}" (score=${bestScore})`);
+      console.log(`[kAIhoot] Weak match "${answer}" → "${cleanButtonText(bestEl)}" (score=${bestScore})`);
       matchedElements.push({ el: bestEl, answer, score: bestScore });
     } else if (indexFallback && !matchedElements.some(m => m.el === indexFallback)) {
-      console.log(`[kaBot] Index fallback for "${answer}"`);
+      console.log(`[kAIhoot] Index fallback for "${answer}"`);
       matchedElements.push({ el: indexFallback, answer, score: 50 });
     } else {
-      console.warn(`[kaBot] No match for "${answer}" (best score: ${bestScore})`);
+      console.warn(`[kAIhoot] No match for "${answer}" (best score: ${bestScore})`);
     }
   }
 
@@ -628,20 +628,20 @@ function applyHighlights(elements, answers, isMultiSelect, options) {
       if (hasImage) {
         if (getComputedStyle(el).position === 'static') el.style.position = 'relative';
         const badge = document.createElement('div');
-        badge.className = 'kabot-checkmark';
+        badge.className = 'kaihoot-checkmark';
         badge.textContent = '✅';
         badge.style.cssText = `
           position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
           font-size:3rem; z-index:10000; pointer-events:none;
           filter:drop-shadow(0 2px 8px rgba(0,0,0,0.7));
-          animation:kabot-fadein .3s ease-out;
+          animation:kaihoot-fadein .3s ease-out;
         `;
         el.appendChild(badge);
       } else {
         const check = document.createElement('span');
         check.textContent = ' ✅';
         check.style.cssText = 'font-size:1.2em; margin-left:6px; vertical-align:middle;';
-        check.className = 'kabot-checkmark';
+        check.className = 'kaihoot-checkmark';
         el.appendChild(check);
       }
     }
@@ -719,7 +719,7 @@ function clickSubmitButton(context = 'generic', attempt = 0, nonce = submitNonce
   for (const sel of SELECTORS) {
     const btn = document.querySelector(sel);
     if (btn && !btn.disabled && btn.offsetParent !== null) {
-      console.log(`[kaBot] Clicking ${context} submit via: ${sel}`);
+      console.log(`[kAIhoot] Clicking ${context} submit via: ${sel}`);
       btn.click();
       updateStatus('Answered ✅', currentAnswer?.length > 60 ? currentAnswer.slice(0, 57) + '...' : currentAnswer);
       return;
@@ -730,7 +730,7 @@ function clickSubmitButton(context = 'generic', attempt = 0, nonce = submitNonce
   for (const btn of document.querySelectorAll('button')) {
     const text = btn.textContent.trim().toLowerCase();
     if (['submit', 'confirm', 'done', 'check'].includes(text) && !btn.disabled && btn.offsetParent !== null) {
-      console.log(`[kaBot] Clicking ${context} submit via text: "${text}"`);
+      console.log(`[kAIhoot] Clicking ${context} submit via text: "${text}"`);
       btn.click();
       updateStatus('Answered ✅', currentAnswer?.length > 60 ? currentAnswer.slice(0, 57) + '...' : currentAnswer);
       return;
@@ -740,36 +740,36 @@ function clickSubmitButton(context = 'generic', attempt = 0, nonce = submitNonce
   if (attempt < 12) {
     setTimeout(() => clickSubmitButton(context, attempt + 1, nonce), 400);
   } else {
-    console.log(`[kaBot] No ${context} submit button found after 12 attempts (WS likely already submitted)`);
+    console.log(`[kAIhoot] No ${context} submit button found after 12 attempts (WS likely already submitted)`);
     updateStatus('Answered ✅', currentAnswer?.length > 60 ? currentAnswer.slice(0, 57) + '...' : currentAnswer);
   }
 }
 
 // ─── Timer Overlay ───────────────────────────────────────────────────
 
-function removeTimerOverlay() { document.getElementById('kabot-timer')?.remove(); }
+function removeTimerOverlay() { document.getElementById('kaihoot-timer')?.remove(); }
 
 function showTimerOverlay(duration, callback) {
   removeTimerOverlay();
-  if (!document.getElementById('kabot-timer-css')) {
+  if (!document.getElementById('kaihoot-timer-css')) {
     const css = document.createElement('style');
-    css.id = 'kabot-timer-css';
+    css.id = 'kaihoot-timer-css';
     css.textContent = `
-      @keyframes kabot-slide-in  { from { transform:translateX(120%); opacity:0 } to { transform:translateX(0); opacity:1 } }
-      @keyframes kabot-slide-out { from { transform:translateX(0); opacity:1 } to { transform:translateX(120%); opacity:0 } }
+      @keyframes kaihoot-slide-in  { from { transform:translateX(120%); opacity:0 } to { transform:translateX(0); opacity:1 } }
+      @keyframes kaihoot-slide-out { from { transform:translateX(0); opacity:1 } to { transform:translateX(120%); opacity:0 } }
     `;
     document.head?.appendChild(css);
   }
 
   const overlay = document.createElement('div');
-  overlay.id = 'kabot-timer';
+  overlay.id = 'kaihoot-timer';
   overlay.style.cssText = `
     position:fixed; top:20px; right:20px;
     background:linear-gradient(135deg,rgba(138,43,226,.92),rgba(218,112,214,.92));
     color:#fff; padding:14px 18px; border-radius:12px;
     z-index:10001; font:600 14px/1.3 system-ui,sans-serif;
     box-shadow:0 6px 20px rgba(0,0,0,.35); min-width:180px;
-    animation:kabot-slide-in .25s ease-out;
+    animation:kaihoot-slide-in .25s ease-out;
     backdrop-filter:blur(8px);
   `;
 
@@ -800,7 +800,7 @@ function showTimerOverlay(duration, callback) {
 }
 
 function slideOutAndRemove(el, afterRemove) {
-  el.style.animation = 'kabot-slide-out .25s ease-in forwards';
+  el.style.animation = 'kaihoot-slide-out .25s ease-in forwards';
   setTimeout(() => { el.remove(); afterRemove?.(); }, 260);
 }
 
@@ -837,7 +837,7 @@ async function placePinOnSvg(coords, options = {}) {
       if (isVisible && noLoadingOverlay) {
         // Tiny settle for CSS transitions
         await new Promise(r => setTimeout(r, 100));
-        console.log(`[kaBot] Pin: SVG visible, overlay clear (attempt ${attempt}, ${Date.now()})`);
+        console.log(`[kAIhoot] Pin: SVG visible, overlay clear (attempt ${attempt}, ${Date.now()})`);
         break;
       }
     }
@@ -849,10 +849,10 @@ async function placePinOnSvg(coords, options = {}) {
   if (!svgEl) {
     svgEl = document.querySelector('[data-functional-selector="pin-input-svg"]');
     if (!svgEl) { updateStatus('Pin SVG not found'); return; }
-    console.warn('[kaBot] Pin: proceeding despite overlay check');
+    console.warn('[kAIhoot] Pin: proceeding despite overlay check');
   }
 
-  console.log(`[kaBot] Pin: placing at ${coords.x.toFixed(1)}%, ${coords.y.toFixed(1)}%`);
+  console.log(`[kAIhoot] Pin: placing at ${coords.x.toFixed(1)}%, ${coords.y.toFixed(1)}%`);
 
   // Dispatch to injected.js for coordinate conversion + React state + WS submission
   // No submit button click needed — WS is the authoritative answer path
@@ -877,7 +877,7 @@ async function placePinOnSvg(coords, options = {}) {
 // ─── Pin Crosshair ──────────────────────────────────────────────────
 
 function showPinCrosshair(svgEl, coords) {
-  document.querySelectorAll('.kabot-pin-crosshair').forEach(el => el.remove());
+  document.querySelectorAll('.kaihoot-pin-crosshair').forEach(el => el.remove());
 
   const imgEl = svgEl.querySelector('image[href], image[xlink\\:href]') || svgEl.querySelector('image');
   const imgX = parseFloat(imgEl?.getAttribute('x') || '0');
@@ -906,11 +906,11 @@ function showPinCrosshair(svgEl, coords) {
   }
 
   const crosshair = document.createElement('div');
-  crosshair.className = 'kabot-pin-crosshair';
+  crosshair.className = 'kaihoot-pin-crosshair';
   crosshair.style.cssText = `position:fixed; left:${screenX}px; top:${screenY}px; transform:translate(-50%,-50%); z-index:9999; pointer-events:none; width:0; height:0;`;
 
   const ring = document.createElement('div');
-  ring.style.cssText = 'position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:40px; height:40px; border:3px solid #ff3333; border-radius:50%; animation:kabot-pulse 1.2s ease-in-out infinite;';
+  ring.style.cssText = 'position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:40px; height:40px; border:3px solid #ff3333; border-radius:50%; animation:kaihoot-pulse 1.2s ease-in-out infinite;';
   const dot = document.createElement('div');
   dot.style.cssText = 'position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:12px; height:12px; background:#ff3333; border-radius:50%; box-shadow:0 0 6px rgba(255,51,51,0.6);';
   const hLine = document.createElement('div');
@@ -921,10 +921,10 @@ function showPinCrosshair(svgEl, coords) {
   labelEl.style.cssText = 'position:absolute; left:calc(50% + 16px); top:calc(50% + 16px); background:rgba(0,0,0,0.85); color:#fff; padding:3px 8px; border-radius:4px; font:600 11px/1.3 monospace; white-space:nowrap;';
   labelEl.textContent = `📍 ${coords.x.toFixed(0)}%, ${coords.y.toFixed(0)}%`;
 
-  if (!document.getElementById('kabot-pulse-style')) {
+  if (!document.getElementById('kaihoot-pulse-style')) {
     const style = document.createElement('style');
-    style.id = 'kabot-pulse-style';
-    style.textContent = '@keyframes kabot-pulse { 0%,100% { width:40px; height:40px; opacity:.9 } 50% { width:56px; height:56px; opacity:.4 } }';
+    style.id = 'kaihoot-pulse-style';
+    style.textContent = '@keyframes kaihoot-pulse { 0%,100% { width:40px; height:40px; opacity:.9 } 50% { width:56px; height:56px; opacity:.4 } }';
     document.head.appendChild(style);
   }
 
@@ -962,7 +962,7 @@ async function solveJumbleFromDOM(answerWord, options) {
   if (loadingEndsAt > 0) {
     const remaining = loadingEndsAt - Date.now();
     if (remaining > 0) {
-      console.log(`[kaBot] Jumble: waiting ${remaining}ms for loading to finish`);
+      console.log(`[kAIhoot] Jumble: waiting ${remaining}ms for loading to finish`);
       await new Promise(r => setTimeout(r, remaining));
     }
   }
@@ -975,30 +975,30 @@ async function solveJumbleFromDOM(answerWord, options) {
 
   let injectedHandled = false;
   const onHandled = () => { injectedHandled = true; };
-  window.addEventListener('kabotJumbleHandled', onHandled, { once: true });
+  window.addEventListener('kaihootJumbleHandled', onHandled, { once: true });
 
   window.dispatchEvent(new CustomEvent('autoJumbleAnswer', { detail: { answerWord, autoClick: options.autoClick !== false } }));
 
   await new Promise(r => setTimeout(r, 1500));
-  window.removeEventListener('kabotJumbleHandled', onHandled);
+  window.removeEventListener('kaihootJumbleHandled', onHandled);
 
   if (injectedHandled) {
-    console.log('[kaBot] Jumble handled by injected.js (React state)');
+    console.log('[kAIhoot] Jumble handled by injected.js (React state)');
     updateStatus('Answered ✅ (jumble)', answerWord);
     return;
   }
 
-  console.log('[kaBot] Injected.js did not handle jumble, trying DOM clicks');
+  console.log('[kAIhoot] Injected.js did not handle jumble, trying DOM clicks');
 
   const textEls = await pollForJumbleTextEls();
   if (textEls.length === 0) { updateStatus('Jumble tiles not found'); return; }
 
   const labels = textEls.map(el => el.textContent?.trim() || '');
-  console.log('[kaBot] Jumble tile labels:', labels);
+  console.log('[kAIhoot] Jumble tile labels:', labels);
 
   const order = computeTileOrder(answerWord, labels);
   if (!order) { updateStatus(`Can't map answer to tiles`); return; }
-  console.log(`[kaBot] Tile order: [${order}] → "${order.map(i => labels[i]).join('')}"`);
+  console.log(`[kAIhoot] Tile order: [${order}] → "${order.map(i => labels[i]).join('')}"`);
 
   // Show badges
   if (options.highlight !== false && !options.silentMode) showJumbleBadges(textEls, order);
@@ -1039,7 +1039,7 @@ async function dispatchOpenEndedAnswer(answer, options = {}) {
     if (input && !input.disabled) {
       const noOverlay = !document.querySelector('[data-functional-selector="loading-bar-progress"]');
       if (noOverlay) {
-        console.log(`[kaBot] Open-ended: input found, overlay clear (attempt ${attempt})`);
+        console.log(`[kAIhoot] Open-ended: input found, overlay clear (attempt ${attempt})`);
         inputReady = true;
         break;
       }
@@ -1053,14 +1053,14 @@ async function dispatchOpenEndedAnswer(answer, options = {}) {
     // Fallback: try anyway if input exists
     const input = document.querySelector('input[data-functional-selector="text-answer-input"]');
     if (!input) { updateStatus('✏️ Input not found'); return; }
-    console.warn('[kaBot] Open-ended: proceeding despite overlay check');
+    console.warn('[kAIhoot] Open-ended: proceeding despite overlay check');
   }
 
   if (submitNonce !== myNonce) return;
 
   // Apply answer delay (stored in seconds)
   if (answerDelay > 0) {
-    console.log(`[kaBot] Open-ended: waiting ${answerDelay}s delay`);
+    console.log(`[kAIhoot] Open-ended: waiting ${answerDelay}s delay`);
     await new Promise(r => setTimeout(r, answerDelay * 1000));
     if (submitNonce !== myNonce) return;
   }
@@ -1069,7 +1069,7 @@ async function dispatchOpenEndedAnswer(answer, options = {}) {
   window.dispatchEvent(new CustomEvent('autoTypeAnswer', {
     detail: { answer, autoClick }
   }));
-  console.log(`[kaBot] Open-ended: dispatched "${answer}" to injected.js`);
+  console.log(`[kAIhoot] Open-ended: dispatched "${answer}" to injected.js`);
   updateStatus('Answered ✅ (open-ended)', `✏️ ${answer}`);
 }
 
@@ -1086,7 +1086,7 @@ async function solveSliderFromDOM(value, options) {
     const min = isNaN(rawMin) ? 0 : rawMin, max = isNaN(rawMax) ? 100 : rawMax, step = isNaN(rawStep) ? 1 : rawStep;
     const snapped = Math.max(min, Math.min(max, min + Math.round((value - min) / step) * step));
     window.dispatchEvent(new CustomEvent('sliderWSSend', { detail: { value: snapped } }));
-    console.log(`[kaBot] Slider: early WS sent with snapped value ${snapped}`);
+    console.log(`[kAIhoot] Slider: early WS sent with snapped value ${snapped}`);
   }
 
   // Now poll for UI to become interactive (for visual feedback + submit click)
@@ -1099,7 +1099,7 @@ async function solveSliderFromDOM(value, options) {
       const noLoadingOverlay = !document.querySelector('[data-functional-selector="loading-bar-progress"]');
       if (noLoadingOverlay) {
         await new Promise(r => setTimeout(r, 100));
-        console.log(`[kaBot] Slider: range input found, overlay clear (attempt ${attempt})`);
+        console.log(`[kAIhoot] Slider: range input found, overlay clear (attempt ${attempt})`);
         break;
       }
     }
@@ -1113,7 +1113,7 @@ async function solveSliderFromDOM(value, options) {
     // Fallback: try anyway
     rangeInput = document.querySelector('input[data-functional-selector="slider-scale"]');
     if (!rangeInput) { updateStatus('🎚️ Slider not found'); return; }
-    console.warn('[kaBot] Slider: proceeding despite overlay check');
+    console.warn('[kAIhoot] Slider: proceeding despite overlay check');
   }
 
   // Extract config from DOM for logging / highlight
@@ -1124,7 +1124,7 @@ async function solveSliderFromDOM(value, options) {
   const max = isNaN(rawMax) ? 100 : rawMax;
   const step = isNaN(rawStep) ? 1 : rawStep;
   const unit = rangeInput.getAttribute('aria-label') || '';
-  console.log(`[kaBot] Slider: value=${value}, range=${min}-${max}, step=${step}, unit="${unit}"`);
+  console.log(`[kAIhoot] Slider: value=${value}, range=${min}-${max}, step=${step}, unit="${unit}"`);
 
   // Highlight the closest marker if highlight is on
   if (options.highlight !== false && !options.silentMode) {
@@ -1216,7 +1216,7 @@ function computeTileOrder(answer, tiles) {
 
 function clickJumbleTilesSequence(textEls, order, onComplete, idx = 0) {
   if (idx >= order.length) {
-    console.log('[kaBot] All jumble tiles clicked');
+    console.log('[kAIhoot] All jumble tiles clicked');
     if (onComplete) onComplete();
     return;
   }
@@ -1234,7 +1234,7 @@ function clickJumbleTilesSequence(textEls, order, onComplete, idx = 0) {
   if (!currentTextEl) {
     currentTextEl = textEls[order[idx]];
     if (!currentTextEl?.isConnected) {
-      console.warn(`[kaBot] Tile "${targetLabel}" gone, skipping`);
+      console.warn(`[kAIhoot] Tile "${targetLabel}" gone, skipping`);
       clickJumbleTilesSequence(textEls, order, onComplete, idx + 1);
       return;
     }
@@ -1268,7 +1268,7 @@ function clickJumbleTilesSequence(textEls, order, onComplete, idx = 0) {
 }
 
 function showJumbleBadges(textEls, order) {
-  document.querySelectorAll('.kabot-jumble-badge').forEach(el => el.remove());
+  document.querySelectorAll('.kaihoot-jumble-badge').forEach(el => el.remove());
 
   for (let pos = 0; pos < order.length; pos++) {
     const textEl = textEls[order[pos]];
@@ -1286,7 +1286,7 @@ function showJumbleBadges(textEls, order) {
     }
 
     const badge = document.createElement('div');
-    badge.className = 'kabot-jumble-badge';
+    badge.className = 'kaihoot-jumble-badge';
     badge.textContent = String(pos + 1);
     badge.style.cssText = `
       position:absolute; top:-8px; right:-8px;
@@ -1294,12 +1294,12 @@ function showJumbleBadges(textEls, order) {
       display:flex; align-items:center; justify-content:center;
       font:bold 14px sans-serif; z-index:10000;
       box-shadow:0 2px 8px rgba(0,0,0,0.5); pointer-events:none;
-      animation:kabot-fadein .3s ease ${pos * 0.1}s both;
+      animation:kaihoot-fadein .3s ease ${pos * 0.1}s both;
     `;
     container.appendChild(badge);
   }
 
-  const cleanup = () => { document.querySelectorAll('.kabot-jumble-badge').forEach(el => el.remove()); observer.disconnect(); };
+  const cleanup = () => { document.querySelectorAll('.kaihoot-jumble-badge').forEach(el => el.remove()); observer.disconnect(); };
   setTimeout(cleanup, 15000);
   const observer = new MutationObserver(() => {
     if (!document.querySelector('[data-functional-selector="question-choice-text-0"]')) { cleanup(); }
@@ -1309,10 +1309,10 @@ function showJumbleBadges(textEls, order) {
 
 // ─── Global Styles ──────────────────────────────────────────────────
 function injectGlobalStyles() {
-  if (document.getElementById('kabot-global-css')) return;
+  if (document.getElementById('kaihoot-global-css')) return;
   const s = document.createElement('style');
-  s.id = 'kabot-global-css';
-  s.textContent = '@keyframes kabot-fadein { from { opacity:0; transform:translateY(-8px) } to { opacity:1; transform:translateY(0) } }';
+  s.id = 'kaihoot-global-css';
+  s.textContent = '@keyframes kaihoot-fadein { from { opacity:0; transform:translateY(-8px) } to { opacity:1; transform:translateY(0) } }';
   if (document.head) document.head.appendChild(s);
   else document.addEventListener('DOMContentLoaded', () => document.head?.appendChild(s));
 }

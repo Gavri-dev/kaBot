@@ -1,4 +1,4 @@
-// kaBot — Popup script
+// kAIhoot — Popup script
 
 const versionLabel  = document.getElementById('versionLabel');
 const apiStatusEl   = document.getElementById('apiStatus');
@@ -32,7 +32,7 @@ async function pollCurrentQuestion() {
   } catch (err) {
     // Expected when no Kahoot tab is active; only log unexpected errors
     if (!err?.message?.includes('Could not establish connection')) {
-      console.debug('[kaBot Popup]', err.message);
+      console.debug('[kAIhoot Popup]', err.message);
     }
   }
 }

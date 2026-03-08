@@ -1,4 +1,4 @@
-// kaBot — OpenAI integration
+// kAIhoot — OpenAI integration
 
 const OPENAI_URL = 'https://api.openai.com/v1/chat/completions';
 const API_TIMEOUT_MS = 15000;
