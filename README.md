@@ -37,8 +37,8 @@ kAIhoot works on **every** question type Kahoot offers, answers in real-time dur
 | No Quiz ID needed | ✅ | ✅ | ❌ |
 | Bring your own API key | ✅ | ❌ | ❌ |
 | GPT-5 support | ✅ | ❌ | ❌ |
-| Answer delay (stealth) | ✅ | ❌ | ✅ |
-| Silent mode | ✅ | ❌ | ❌ |
+| Answer delay (stealth) | ✅ | ✅ | ✅ |
+| Silent mode | ✅ | ✅ | ✅ |
 | Free & open source | ✅ | ❌ | ❌ |
 
 ## 🧠 Supported Question Types
