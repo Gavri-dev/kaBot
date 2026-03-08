@@ -4,22 +4,22 @@
 
 ### AI-Powered Kahoot Auto-Answer Chrome Extension
 
-**The most complete Kahoot AI assistant - supporting every question type, including ones no other tool can handle.**
+**The most complete Kahoot AI assistant - supports every question type, including ones no other tool can handle.**
 
 [![Version](https://img.shields.io/badge/Version-3.4.0-blueviolet?style=for-the-badge)](https://github.com/Gavri-dev/kAIhoot/releases)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 [![Chrome MV3](https://img.shields.io/badge/Chrome-Manifest_V3-blue?style=for-the-badge&logo=googlechrome&logoColor=white)](https://developer.chrome.com/docs/extensions/develop/migrate/what-is-mv3)
 [![OpenAI](https://img.shields.io/badge/Powered_by-OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white)](https://platform.openai.com/api-keys)
 
-**No quiz ID needed · No paywall · No server · BYO API key · Works on any live game**
+**No quiz ID needed · No paywall · No server · Bring your own API key · Works on any live game**
 
-> ⚠️ **Requires the host to have "Show questions & answers on players' devices" enabled in Kahoot settings.** This is on by default for most games. If the host disables it, the extension has no question data to work with.
+> ⚠️ The host needs to have **"Show questions & answers on players' devices"** enabled in their Kahoot settings. This is on by default for most games. If the host turns it off, the extension won't have any question data to work with.
 
 </div>
 
 ## ⚡ What Makes This Different
 
-Most Kahoot tools only handle basic multiple-choice. Some need the Quiz ID beforehand. Others hide behind a paywall or shared server that gets rate-limited.
+Most Kahoot tools only handle basic multiple-choice. Some need the Quiz ID beforehand. Others are paywalled or use a shared server that gets rate-limited.
 
 kAIhoot works on **every** question type Kahoot offers, answers in real-time during live games, and runs entirely on your own OpenAI key. No middleman, no limits, no accounts.
 
@@ -35,7 +35,7 @@ kAIhoot works on **every** question type Kahoot offers, answers in real-time dur
 | Vision AI for images 🔥 | ✅ | ❌ | ❌ |
 | Works on custom quizzes | ✅ | ✅ | ❌ |
 | No Quiz ID needed | ✅ | ✅ | ❌ |
-| BYO API key (no paywall) | ✅ | ❌ | ❌ |
+| Bring your own API key | ✅ | ❌ | ❌ |
 | GPT-5 support | ✅ | ❌ | ❌ |
 | Answer delay (stealth) | ✅ | ❌ | ✅ |
 | Silent mode | ✅ | ❌ | ❌ |
@@ -45,40 +45,85 @@ kAIhoot works on **every** question type Kahoot offers, answers in real-time dur
 
 **📝 Multiple Choice & True/False** - Reads the question and all choices from the WebSocket, sends to GPT, highlights and clicks the correct answer. Handles image-based choices by reading `aria-label` attributes.
 
-**☑️ Multi-Select** - Evaluates each option independently using a YES/NO per-option prompt strategy. Filters out fabricated or nonsensical choices and selects all correct answers (typically 2-4 out of the options).
+**☑️ Multi-Select** - Evaluates each option independently with a YES/NO per-option prompt. Filters out fabricated or nonsensical choices and selects all correct answers (typically 2-4 out of the options).
 
 **📍 Pin-It (Map & Image Questions)** - Sends the image to GPT-4.1 Vision with a coordinate system and landmark reference points for world maps. Places the pin on the correct location via SVG coordinate injection. No other Kahoot tool does this.
 
-**🧩 Jumble (Reorder)** - Reads shuffled tiles, asks GPT for the correct order, computes the tile permutation mapping, then reorders through React fiber tree manipulation and drag-click simulation.
+**🧩 Jumble (Reorder)** - Reads shuffled tiles, asks GPT for the correct order, computes the tile permutation, then reorders through React fiber tree manipulation and drag-click simulation.
 
-**🎚️ Slider (Numeric)** - Asks GPT the factual question, snaps the answer to the nearest valid step value using offset math (`min + round((value - min) / step) * step`), sends the WS answer during the loading animation for speed, then sets the visual slider and clicks submit.
+**🎚️ Slider (Numeric)** - Asks GPT the factual question, snaps the answer to the nearest valid step value using offset math (`min + round((value - min) / step) * step`), sends the WS answer during the loading animation, then sets the visual slider and clicks submit.
 
 **✏️ Open-Ended (Type Answer)** - Generates a short answer within the character limit, types it character-by-character with simulated keyboard events (keydown → InputEvent → keyup) to work with React controlled inputs, then submits.
 
 ## 🛠️ Installation
 
-1. **Download** - Clone or download this repository
-   ```bash
-   git clone https://github.com/Gavri-dev/kAIhoot.git
-   ```
+### Step 1: Download the extension
 
-2. **Load in Chrome** - Go to `chrome://extensions/`, enable **Developer Mode** (top right), click **Load unpacked**, and select the `kAIhoot` folder.
+**Option A: Download ZIP (easiest, no git needed)**
 
-3. **Add your API key** - Click the extension icon, expand OpenAI settings, and paste your [OpenAI API key](https://platform.openai.com/api-keys). Model defaults to `gpt-5-mini` (fast + cheap), but you can use any model.
+1. Click the green **"Code"** button at the top of this page
+2. Click **"Download ZIP"**
+3. Extract/unzip the downloaded file to a folder on your computer (right-click → "Extract All" on Windows)
+4. Remember where you extracted it, you'll need the folder path in the next step
 
-4. **Join a Kahoot game** - the extension activates automatically on `kahoot.it`
+**Option B: Clone with Git**
+
+If you have Git installed, open a terminal and run:
+```bash
+git clone https://github.com/Gavri-dev/kAIhoot.git
+```
+
+### Step 2: Load the extension in Chrome
+
+1. Open Chrome and type `chrome://extensions/` in the address bar, then press Enter
+2. In the top-right corner, flip the **"Developer mode"** toggle to ON
+3. Three new buttons appear at the top. Click **"Load unpacked"**
+4. Navigate to the folder where you extracted/cloned kAIhoot and select it
+5. The extension should now appear in your extensions list with the kAIhoot icon
+
+If you see an error about `manifest.json`, make sure you selected the folder that directly contains `manifest.json`, not a parent folder.
+
+### Step 3: Get an OpenAI API key
+
+The extension needs an OpenAI API key to work. This is what lets it talk to GPT. You'll need to add a small amount of credit to your OpenAI account (a few dollars is plenty, a full 20-question game costs about 1-3 cents).
+
+1. Go to [platform.openai.com](https://platform.openai.com) and create an account (or sign in)
+2. Go to [platform.openai.com/settings/organization/billing](https://platform.openai.com/settings/organization/billing) and add a payment method. You can start with as little as $5, which will last hundreds of games
+3. Go to [platform.openai.com/api-keys](https://platform.openai.com/api-keys) and click **"Create new secret key"**
+4. Give it any name (like "kAIhoot") and click **"Create"**
+5. Copy the key that appears. It starts with `sk-`. **Save it somewhere safe** because OpenAI won't show it again
+
+### Step 4: Configure the extension
+
+1. Click the puzzle piece icon (🧩) in Chrome's top-right toolbar to see your extensions
+2. Click on **kAIhoot** to open the popup
+3. Click **"OpenAI Settings"** to expand the settings panel
+4. Paste your API key into the **"API Key"** field
+5. Leave the model as `gpt-5-mini` (fastest and cheapest option). You can change it later
+6. Click **Save**
+7. The status should change from "No API key" to "API key set"
+
+### Step 5: Play
+
+1. Go to [kahoot.it](https://kahoot.it) and join a game with a PIN like normal
+2. The extension activates automatically. You'll see a small "kAIhoot: Ready" badge in the top-right corner of the screen
+3. When a question appears, the extension reads it, sends it to GPT, and highlights + clicks the correct answer
+
+That's it. If you want the extension to wait before answering (so it doesn't look suspicious), drag the **Answer Delay** slider in the popup to add a few seconds of wait time.
 
 ## ⚙️ Settings
 
 | Setting | Default | What it does |
 |---|---|---|
 | Highlight Answer | ✅ On | Green glow on the correct answer |
-| Auto-Click | ✅ On | Automatically clicks/submits |
-| Answer Delay | 0s | Configurable delay (0-30s) with countdown overlay |
-| Silent Mode | ❌ Off | Hides all on-screen indicators |
-| Model | `gpt-5-mini` | Any OpenAI model (`gpt-5-mini`, `gpt-5`, `gpt-4.1`, etc.) |
+| Auto-Click | ✅ On | Automatically clicks/submits the answer |
+| Answer Delay | 0s | Wait 0-10 seconds before answering (shows a countdown) |
+| Silent Mode | ❌ Off | Hides all on-screen indicators (status badge, timer, highlights) |
+| Model | `gpt-5-mini` | Any OpenAI model. `gpt-5-mini` is fast and cheap. `gpt-5` is smarter but slower |
 
-## 🏗️ Architecture
+## 🏗️ How It Works
+
+When you join a Kahoot game, the extension intercepts the WebSocket connection between your browser and Kahoot's servers. Every time a new question gets sent to your client, kAIhoot grabs it before the UI even renders, sends it to OpenAI, and uses the response to answer automatically.
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -107,17 +152,39 @@ kAIhoot works on **every** question type Kahoot offers, answers in real-time dur
 └─────────────────────────────────────────────────────┘
 ```
 
-`injected.js` hooks into the page's WebSocket and intercepts question data as Kahoot sends it - before the UI even renders. `content.js` enriches the question (image labels, slider config from DOM) and passes it to the service worker. `autoresponder.js` routes it to the right handler in `openai.js`, and the answer flows back through the chain into DOM manipulation + WS submission.
+`injected.js` hooks into the WebSocket and intercepts question data as Kahoot sends it. `content.js` enriches the question (image labels, slider range from the DOM) and passes it to the service worker. `autoresponder.js` routes it to the right handler in `openai.js`, and the answer flows back through the chain into DOM manipulation + WS submission.
 
-Questions are sent to AI the instant they arrive via WebSocket (during the loading animation). Slider and jumble answers are submitted via WS before the UI is even interactive. Pin placement polls the SVG at 100ms intervals instead of waiting for buffers.
+Questions get sent to AI the instant they arrive via WebSocket, during the loading animation. Slider and jumble answers are submitted via WS before the UI is even interactive. Pin placement polls the SVG at 100ms intervals instead of waiting for buffers.
 
 ## 🔒 Privacy
 
-Your API key is stored in `chrome.storage.sync` and only sent to OpenAI. There's no backend, no analytics, no telemetry, no data collection. The extension only has permissions for `storage`, `kahoot.it`, and `api.openai.com`.
+Your API key is stored locally in `chrome.storage.sync` and only ever sent to OpenAI. There's no backend, no analytics, no telemetry, no data collection. The extension only requests permissions for `storage`, `kahoot.it`, and `api.openai.com`.
 
 ## 💰 API Cost
 
-A typical 20-question game on `gpt-5-mini` costs about $0.01-0.03. Pin-it questions are slightly more (~$0.02 each) because they use `gpt-4.1` for vision.
+A typical 20-question game on `gpt-5-mini` costs about $0.01-0.03. Pin-it questions are a bit more (~$0.02 each) because they use `gpt-4.1` for vision. $5 of OpenAI credit will last you a very long time.
+
+## 🔧 Troubleshooting
+
+**Extension doesn't activate / no status badge appears**
+- Make sure you're on `kahoot.it` (not `kahoot.com` or `create.kahoot.com`)
+- Try refreshing the page after loading the extension
+- Check `chrome://extensions/` and make sure kAIhoot is enabled (toggle is blue)
+
+**"No API key" error**
+- Open the extension popup and check that your key is saved
+- Make sure the key starts with `sk-` and doesn't have extra spaces
+
+**Answers are wrong or empty**
+- Check that your OpenAI account has credit at [platform.openai.com/settings/organization/billing](https://platform.openai.com/settings/organization/billing)
+- Try switching the model to `gpt-5` for harder questions (slower but smarter)
+
+**Extension doesn't answer some question types**
+- The host might have disabled "Show questions & answers on players' devices"
+- Surveys and polls are intentionally skipped since they're non-scored
+
+**"manifest.json" error when loading**
+- You probably selected the wrong folder. Make sure you pick the folder that has `manifest.json` directly inside it, not a parent folder or a subfolder
 
 ## 🧪 Tested With
 
@@ -129,7 +196,7 @@ Built by [@Gavri-dev](https://github.com/Gavri-dev). Originally based on [QuizGP
 
 ## ⚠️ Disclaimer
 
-Educational and research purposes only. Demonstrates how browser extensions interact with web applications through WebSocket interception and DOM manipulation. Not affiliated with Kahoot! or OpenAI. Use responsibly.
+Educational and research purposes only. Demonstrates how browser extensions can interact with web applications through WebSocket interception and DOM manipulation. Not affiliated with Kahoot! or OpenAI. Use responsibly.
 
 ## 📄 License
 
