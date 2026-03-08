@@ -17,6 +17,15 @@
 
 </div>
 
+## 📑 Table of Contents
+
+| | |
+|---|---|
+| [⚡ What Makes This Different](#-what-makes-this-different) | [🏗️ How It Works](#️-how-it-works) |
+| [🧠 Supported Question Types](#-supported-question-types) | [🔒 Privacy](#-privacy) |
+| [🛠️ Installation](#️-installation) | [💰 API Cost](#-api-cost) |
+| [⚙️ Settings](#️-settings) | [🔧 Troubleshooting](#-troubleshooting) |
+
 ## ⚡ What Makes This Different
 
 Most Kahoot tools only handle basic multiple-choice. Some need the Quiz ID beforehand. Others are paywalled or use a shared server that gets rate-limited.
