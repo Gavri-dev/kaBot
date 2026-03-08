@@ -4,7 +4,7 @@
 
 ### AI-Powered Kahoot Auto-Answer Chrome Extension
 
-**The most complete Kahoot AI assistant — supporting every question type, including ones no other tool can handle.**
+**The most complete Kahoot AI assistant - supporting every question type, including ones no other tool can handle.**
 
 [![Version](https://img.shields.io/badge/Version-3.4.0-blueviolet?style=for-the-badge)](https://github.com/Gavri-dev/kAIhoot/releases)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
@@ -43,30 +43,30 @@ kAIhoot works on **every** question type Kahoot offers, answers in real-time dur
 
 ## 🧠 Supported Question Types
 
-**📝 Multiple Choice & True/False** — Reads the question and all choices from the WebSocket, sends to GPT, highlights and clicks the correct answer. Handles image-based choices by reading `aria-label` attributes.
+**📝 Multiple Choice & True/False** - Reads the question and all choices from the WebSocket, sends to GPT, highlights and clicks the correct answer. Handles image-based choices by reading `aria-label` attributes.
 
-**☑️ Multi-Select** — Evaluates each option independently using a YES/NO per-option prompt strategy. Filters out fabricated or nonsensical choices and selects all correct answers (typically 2-4 out of the options).
+**☑️ Multi-Select** - Evaluates each option independently using a YES/NO per-option prompt strategy. Filters out fabricated or nonsensical choices and selects all correct answers (typically 2-4 out of the options).
 
-**📍 Pin-It (Map & Image Questions)** — Sends the image to GPT-4.1 Vision with a coordinate system and landmark reference points for world maps. Places the pin on the correct location via SVG coordinate injection. No other Kahoot tool does this.
+**📍 Pin-It (Map & Image Questions)** - Sends the image to GPT-4.1 Vision with a coordinate system and landmark reference points for world maps. Places the pin on the correct location via SVG coordinate injection. No other Kahoot tool does this.
 
-**🧩 Jumble (Reorder)** — Reads shuffled tiles, asks GPT for the correct order, computes the tile permutation mapping, then reorders through React fiber tree manipulation and drag-click simulation.
+**🧩 Jumble (Reorder)** - Reads shuffled tiles, asks GPT for the correct order, computes the tile permutation mapping, then reorders through React fiber tree manipulation and drag-click simulation.
 
-**🎚️ Slider (Numeric)** — Asks GPT the factual question, snaps the answer to the nearest valid step value using offset math (`min + round((value - min) / step) * step`), sends the WS answer during the loading animation for speed, then sets the visual slider and clicks submit.
+**🎚️ Slider (Numeric)** - Asks GPT the factual question, snaps the answer to the nearest valid step value using offset math (`min + round((value - min) / step) * step`), sends the WS answer during the loading animation for speed, then sets the visual slider and clicks submit.
 
-**✏️ Open-Ended (Type Answer)** — Generates a short answer within the character limit, types it character-by-character with simulated keyboard events (keydown → InputEvent → keyup) to work with React controlled inputs, then submits.
+**✏️ Open-Ended (Type Answer)** - Generates a short answer within the character limit, types it character-by-character with simulated keyboard events (keydown → InputEvent → keyup) to work with React controlled inputs, then submits.
 
 ## 🛠️ Installation
 
-1. **Download** — Clone or download this repository
+1. **Download** - Clone or download this repository
    ```bash
    git clone https://github.com/Gavri-dev/kAIhoot.git
    ```
 
-2. **Load in Chrome** — Go to `chrome://extensions/`, enable **Developer Mode** (top right), click **Load unpacked**, and select the `kAIhoot` folder.
+2. **Load in Chrome** - Go to `chrome://extensions/`, enable **Developer Mode** (top right), click **Load unpacked**, and select the `kAIhoot` folder.
 
-3. **Add your API key** — Click the extension icon, expand OpenAI settings, and paste your [OpenAI API key](https://platform.openai.com/api-keys). Model defaults to `gpt-5-mini` (fast + cheap), but you can use any model.
+3. **Add your API key** - Click the extension icon, expand OpenAI settings, and paste your [OpenAI API key](https://platform.openai.com/api-keys). Model defaults to `gpt-5-mini` (fast + cheap), but you can use any model.
 
-4. **Join a Kahoot game** — the extension activates automatically on `kahoot.it`
+4. **Join a Kahoot game** - the extension activates automatically on `kahoot.it`
 
 ## ⚙️ Settings
 
@@ -107,7 +107,7 @@ kAIhoot works on **every** question type Kahoot offers, answers in real-time dur
 └─────────────────────────────────────────────────────┘
 ```
 
-`injected.js` hooks into the page's WebSocket and intercepts question data as Kahoot sends it — before the UI even renders. `content.js` enriches the question (image labels, slider config from DOM) and passes it to the service worker. `autoresponder.js` routes it to the right handler in `openai.js`, and the answer flows back through the chain into DOM manipulation + WS submission.
+`injected.js` hooks into the page's WebSocket and intercepts question data as Kahoot sends it - before the UI even renders. `content.js` enriches the question (image labels, slider config from DOM) and passes it to the service worker. `autoresponder.js` routes it to the right handler in `openai.js`, and the answer flows back through the chain into DOM manipulation + WS submission.
 
 Questions are sent to AI the instant they arrive via WebSocket (during the loading animation). Slider and jumble answers are submitted via WS before the UI is even interactive. Pin placement polls the SVG at 100ms intervals instead of waiting for buffers.
 
@@ -133,7 +133,7 @@ Educational and research purposes only. Demonstrates how browser extensions inte
 
 ## 📄 License
 
-[MIT](LICENSE) — do whatever you want, just keep the copyright notice.
+[MIT](LICENSE) - do whatever you want, just keep the copyright notice.
 
 <div align="center">
 
