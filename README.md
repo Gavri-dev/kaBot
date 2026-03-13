@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/ff6ed9e2-087a-46c3-8a79-280eb651bdb4" alt="kAIhoot - AI-Powered Kahoot Bot Chrome Extension" width="600">
+</p>
+
 <div align="center">
 
 # 🤖 kAIhoot
