@@ -2,7 +2,7 @@
 
 # 🤖 kAIhoot
 
-### AI-Powered Kahoot Auto-Answer Chrome Extension
+### AI-Powered Kahoot Bot Auto-Answer Chrome Extension
 
 **The most complete Kahoot AI assistant - supports every question type, including ones no other tool can handle.**
 
